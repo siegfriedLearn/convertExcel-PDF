@@ -13,7 +13,7 @@ const processFiles = () => {
     //Info del archivo viene en req.file
     // const rutaArchivo = req.file.path
     // const rutaArchivo = '/Users/carlosmedina/Downloads/test.xlsx'
-    const rutaArchivo = '/Users/carlosmedina/Downloads/filtrado.xlsx'
+    const rutaArchivo = '/Users/carlosmedina/Downloads/SR.xlsx'
     //console.log(req.file)
     //Leer archivo
     const archivoExcel = controladorExcel.readFile(rutaArchivo)
@@ -59,29 +59,34 @@ const processFiles = () => {
 // });
 
 
-function buildPDF(data){
+function buildPDF(){
     const doc = new PDFDocument();
 
-    doc.fontSize(12).text(
-        `ticket: ${data.TICKET}      
-descripcion: ${data.DESCRIPCION}
-tipo: ${data.TIPO}
-grupo_resolutor: ${data.RESOLUTORGROUP}
-clasificacion_nivel_3: ${data.ID_CLASIFICACION3}
-cumple_fcr: ${data.CUMPLEFCR}
-detalle: ${data.DETALLE}
-solucion: ${data.SOLUCION}`
-)
+    infoHoja.forEach((ticket)=>{
+        doc.fontSize(10).text(`INICIO SECCIÓN`, {align: 'center'})
+        doc.fontSize(8).text(`TICKET: ${ticket.TICKET}`);      
+    doc.fontSize(8).text(`DESCRIPCION: ${ticket.DESCRIPCION.replace(/\t/g, ' ')}`);
+    doc.fontSize(8).text(`TIPO: ${ticket.TIPO}`);
+    doc.fontSize(8).text(`GRUPO_RESOLUTOR: ${ticket.RESOLUTORGROUP}`);
+    doc.fontSize(8).text(`CLASIFICACION_NIVEL_3: ${ticket.ID_CLASIFICACION3}`);
+    doc.fontSize(8).text(`CUMPLE_FCR: ${ticket.CUMPLEFCR}`);
+    doc.fontSize(8).text(`DETALLE: ${ticket.DETALLE.replace(/\r\n|\r/g, '\n').replace(/\t/g, ' ')}`);
+    doc.fontSize(8).text(`SOLUCION: ${ticket.SOLUCION.replace(/\r\n|\r/g, '\n').replace(/\t/g, ' ')}`);
+    doc.fontSize(10).text(`FIN SECCIÓN`, {align: 'center'})
+    //doc.addPage()
+    })
+   
 
-    doc.pipe(fs.createWriteStream(`./documentos/${data.TICKET}.pdf`))
+    doc.pipe(fs.createWriteStream(`SR.pdf`))
     doc.end();
 }
 
 
-infoHoja.forEach((ticket) => {
-    buildPDF(ticket)
-});
+// infoHoja.forEach((ticket) => {
+//     buildPDF(ticket)
+// });
 
+buildPDF()
 
 
 
